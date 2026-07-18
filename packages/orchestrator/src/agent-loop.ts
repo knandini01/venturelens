@@ -73,9 +73,9 @@ BUSINESS CONTEXT:
 // ── Helper ────────────────────────────────────────
 
 function convertSchemaToGemini(schema: any): Schema {
-  if (!schema) return { type: SchemaType.STRING }; // Fallback
+  if (!schema) return { type: SchemaType.OBJECT, properties: {} } as any;
   
-  const mapped: Schema = { type: SchemaType.OBJECT };
+  const mapped: any = { type: SchemaType.OBJECT };
   
   if (schema.type === 'object') mapped.type = SchemaType.OBJECT;
   else if (schema.type === 'string') mapped.type = SchemaType.STRING;
@@ -101,7 +101,7 @@ function convertSchemaToGemini(schema: any): Schema {
     mapped.required = schema.required;
   }
   
-  return mapped;
+  return mapped as Schema;
 }
 
 // ── Agent Loop Implementation ────────────────────
@@ -125,7 +125,7 @@ export class AgentLoop {
       return {
         name: safeName,
         description: `[${tool.serverName}] ${tool.description}`,
-        parameters: convertSchemaToGemini(tool.inputSchema),
+        parameters: convertSchemaToGemini(tool.inputSchema) as any,
       };
     });
   }

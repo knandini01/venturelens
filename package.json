@@ -19,6 +19,7 @@
     "dev:negotiation": "tsx watch packages/mcp-negotiation/src/server.ts",
     "dev:orchestrator": "tsx watch packages/orchestrator/src/server.ts",
     "dev:dashboard": "tsx watch packages/dashboard/src/server.ts",
+    "prebuild": "npm install",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"
   },
