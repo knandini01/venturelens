@@ -1,4 +1,0 @@
-frontend/
-docs/
-architecture.png
-
