@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anvaya — AI Business Operating System</title>
+  <meta name="description" content="Anvaya is an autonomous AI Business Operating System for Indian MSMEs, manufacturers, and entrepreneurs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ═══ Sidebar ═══ -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">अ</div>
+      <div>
+        <h1 class="brand-name">Anvaya</h1>
+        <span class="brand-tagline">Business OS</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-view="command-center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        Command Center
+      </a>
+      <a href="#" class="nav-item" data-view="workflows">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Workflows
+      </a>
+      <a href="#" class="nav-item" data-view="tools">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        MCP Tools
+      </a>
+      <a href="#" class="nav-item" data-view="system">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        System
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-indicator" id="status-indicator">
+        <span class="status-dot"></span>
+        <span class="status-text">Connecting...</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ Main Content ═══ -->
+  <main id="main-content" class="main-content">
+    
+    <!-- ── Command Center View ── -->
+    <section id="view-command-center" class="view active">
+      <header class="view-header">
+        <div>
+          <h2 class="view-title">Command Center</h2>
+          <p class="view-subtitle">Issue business commands in natural language. The AI agent plans and executes the workflow autonomously.</p>
+        </div>
+        <div class="header-badges">
+          <span class="badge badge-servers" id="badge-servers">0 servers</span>
+          <span class="badge badge-tools" id="badge-tools">0 tools</span>
+        </div>
+      </header>
+
+      <!-- Command Input -->
+      <div class="command-input-container">
+        <div class="command-input-wrapper">
+          <textarea 
+            id="command-input" 
+            class="command-input"
+            placeholder="e.g., Sell 500 coconut oil soaps to Greenleaf Retail in Bangalore"
+            rows="1"
+          ></textarea>
+          <button id="execute-btn" class="execute-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Execute
+          </button>
+        </div>
+        <div class="command-suggestions">
+          <button class="suggestion" data-command="Check stock levels for all products">📦 Check stock levels</button>
+          <button class="suggestion" data-command="Sell 500 coconut oil soaps to Greenleaf Retail in Bangalore">🛒 Sell 500 soaps to Bangalore</button>
+          <button class="suggestion" data-command="Find suppliers for coconut oil in Kerala">🔍 Find coconut oil suppliers</button>
+          <button class="suggestion" data-command="Estimate transport cost from Kochi to Mumbai">🚚 Transport Kochi → Mumbai</button>
+          <button class="suggestion" data-command="Get market prices for coconut oil">📊 Market prices</button>
+        </div>
+      </div>
+
+      <!-- Execution Trace -->
+      <div id="execution-area" class="execution-area hidden">
+        <div class="execution-header">
+          <h3 class="execution-title">
+            <span class="pulse-dot"></span>
+            Execution Trace
+          </h3>
+          <span id="workflow-id" class="workflow-id"></span>
+        </div>
+        <div id="execution-steps" class="execution-steps"></div>
+        
+        <!-- Confirmation Gates -->
+        <div id="confirmation-area" class="confirmation-area hidden"></div>
+
+        <!-- Final Response -->
+        <div id="final-response" class="final-response hidden"></div>
+      </div>
+    </section>
+
+    <!-- ── Workflows View ── -->
+    <section id="view-workflows" class="view">
+      <header class="view-header">
+        <div>
+          <h2 class="view-title">Workflow History</h2>
+          <p class="view-subtitle">Complete execution traces of past business workflows.</p>
+        </div>
+      </header>
+      <div id="workflow-history" class="workflow-history">
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <p>No workflows executed yet. Use the Command Center to get started.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Tools View ── -->
+    <section id="view-tools" class="view">
+      <header class="view-header">
+        <div>
+          <h2 class="view-title">MCP Tools Registry</h2>
+          <p class="view-subtitle">All tools discovered from connected MCP servers.</p>
+        </div>
+      </header>
+      <div id="tools-grid" class="tools-grid">
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <p>Loading tools from MCP servers...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── System View ── -->
+    <section id="view-system" class="view">
+      <header class="view-header">
+        <div>
+          <h2 class="view-title">System Health</h2>
+          <p class="view-subtitle">MCP server connections and orchestrator status.</p>
+        </div>
+      </header>
+      <div id="system-status" class="system-status">
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/></svg>
+          <p>Checking system health...</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

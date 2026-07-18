@@ -1,0 +1,35 @@
+{
+  "name": "anvaya",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx packages/shared/src/db/seed.ts",
+    "dev:inventory": "tsx watch packages/mcp-inventory/src/server.ts",
+    "dev:documents": "tsx watch packages/mcp-documents/src/server.ts",
+    "dev:logistics": "tsx watch packages/mcp-logistics/src/server.ts",
+    "dev:market": "tsx watch packages/mcp-market/src/server.ts",
+    "dev:discovery": "tsx watch packages/mcp-discovery/src/server.ts",
+    "dev:negotiation": "tsx watch packages/mcp-negotiation/src/server.ts",
+    "dev:orchestrator": "tsx watch packages/orchestrator/src/server.ts",
+    "dev:dashboard": "tsx watch packages/dashboard/src/server.ts",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "drizzle-kit": "^0.22.8",
+    "@types/better-sqlite3": "^7.6.10",
+    "tsx": "^4.16.2"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.31.2",
+    "@libsql/client": "^0.6.2"
+  }
+}

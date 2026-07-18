@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anvaya - AI Business Workflow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel-bg: #1a1d24;
+      --border: #2a2d35;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --success: #10b981;
+      --pending: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    /* Header / Input Area */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .input-box {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-box textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+      margin-bottom: 1rem;
+    }
+
+    .input-box button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      float: right;
+    }
+
+    .input-box button:hover {
+      background: #2563eb;
+    }
+
+    .input-box button:disabled {
+      background: var(--pending);
+      cursor: not-allowed;
+    }
+
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    /* Workflow Timeline */
+    .workflow {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      display: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .workflow-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .workflow-header .icon {
+      font-size: 1.5rem;
+    }
+
+    .workflow-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .workflow-header .badge {
+      margin-left: auto;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.25rem;
+      position: relative;
+    }
+
+    /* Connecting line */
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 32px;
+      bottom: -16px;
+      width: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .step.completed:not(:last-child)::after {
+      background: var(--success);
+    }
+
+    .step-indicator {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--pending);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .step.completed .step-indicator {
+      border-color: var(--success);
+      background: var(--success);
+    }
+
+    .step.completed .step-indicator::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .step.active .step-indicator {
+      border-color: var(--primary);
+      background: transparent;
+    }
+
+    .step.active .step-indicator::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background: var(--primary);
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.8); opacity: 0.5; }
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-icon {
+      font-size: 1.1rem;
+    }
+
+    .step-title {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .step.active .step-title {
+      color: var(--text-main);
+    }
+
+    .step.completed .step-title {
+      color: var(--text-main);
+    }
+
+    .substeps {
+      display: none;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid var(--border);
+    }
+
+    .step.active .substeps {
+      display: block;
+    }
+
+    .substep {
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .substep.active {
+      color: var(--primary);
+    }
+
+    .substep.active::before {
+      content: '•';
+    }
+
+    .substep.completed::before {
+      content: '✓';
+      color: var(--success);
+    }
+
+    .step-result {
+      margin-top: 0.75rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #a7f3d0;
+      display: none;
+      white-space: pre-wrap;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .step.completed .step-result {
+      display: none; /* Hidden based on user feedback to reduce unnecessary details */
+    }
+
+    /* Final Result */
+    .final-result {
+      margin-top: 2rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: none;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+    
+    .final-result h3 {
+      color: var(--success);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+      margin-top: 2rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Anvaya AI Business Agent</h1>
+      <p>Enter your business intent to trigger the MCP workflow</p>
+    </div>
+
+    <div class="input-box clearfix">
+      <textarea id="promptInput" placeholder='e.g., "I manufacture handmade soaps and want to sell them in Hyderabad. My budget is 50000."'></textarea>
+      <button id="runBtn">Run Workflow</button>
+    </div>
+
+    <div class="workflow" id="workflowContainer">
+      <div class="workflow-header">
+        <span class="icon">🧠</span>
+        <h2>AI Agent Orchestrator</h2>
+        <span class="badge" id="intentBadge">INITIALIZING</span>
+      </div>
+      <div class="step-list" id="stepList">
+        <!-- Steps will be injected here -->
+      </div>
+      <div class="final-result" id="finalResult">
+        <h3><span>✨</span> AI Synthesis Complete</h3>
+        <div id="finalResultText"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const runBtn = document.getElementById('runBtn');
+    const promptInput = document.getElementById('promptInput');
+    const workflowContainer = document.getElementById('workflowContainer');
+    const stepList = document.getElementById('stepList');
+    const intentBadge = document.getElementById('intentBadge');
+
+    let currentEventSource = null;
+
+    runBtn.addEventListener('click', async () => {
+      const prompt = promptInput.value.trim();
+      if (!prompt) return;
+
+      // Reset UI
+      runBtn.disabled = true;
+      workflowContainer.style.display = 'block';
+      stepList.innerHTML = '';
+      intentBadge.textContent = 'ANALYZING';
+      intentBadge.style.color = 'var(--text-main)';
+      intentBadge.style.background = 'var(--border)';
+
+      if (currentEventSource) {
+        currentEventSource.close();
+      }
+
+      try {
+        // Step 1: Call API to classify and get steps
+        const res = await fetch('/api/classify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+
+        if (!data.steps || data.steps.length === 0) {
+          intentBadge.textContent = 'UNKNOWN INTENT';
+          runBtn.disabled = false;
+          return;
+        }
+
+        intentBadge.textContent = data.intent.toUpperCase().replace(/_/g, ' ');
+        intentBadge.style.color = 'var(--primary)';
+        intentBadge.style.background = 'rgba(59, 130, 246, 0.1)';
+
+        // Pre-render steps in pending state
+        data.steps.forEach(step => {
+          const stepEl = document.createElement('div');
+          stepEl.className = 'step';
+          stepEl.id = `step-${step.id}`;
+          
+          let substepsHtml = step.subSteps.map((sub, i) => `<div class="substep" id="sub-${step.id}-${i}">${sub}</div>`).join('');
+
+          stepEl.innerHTML = `
+            <div class="step-indicator"></div>
+            <div class="step-content">
+              <div class="step-header">
+                <span class="step-icon">${step.icon}</span>
+                <span class="step-title">${step.label}</span>
+              </div>
+              <div class="substeps" id="substeps-${step.id}">
+                ${substepsHtml}
+              </div>
+              <div class="step-result" id="result-${step.id}"></div>
+            </div>
+          `;
+          stepList.appendChild(stepEl);
+        });
+
+        // Step 2: Start execution stream
+        const response = await fetch('/api/execute-workflow', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n\n');
+          buffer = lines.pop() || ''; // Keep the incomplete line
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const eventStr = line.substring(6);
+              try {
+                const eventData = JSON.parse(eventStr);
+                handleStreamEvent(eventData);
+              } catch (e) {
+                console.error("Error parsing event data", eventStr);
+              }
+            }
+          }
+        }
+        
+        runBtn.disabled = false;
+        intentBadge.textContent += ' (COMPLETE)';
+        intentBadge.style.color = 'var(--success)';
+        intentBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+
+      } catch (err) {
+        console.error(err);
+        intentBadge.textContent = 'ERROR';
+        intentBadge.style.color = '#ef4444';
+        intentBadge.style.background = 'rgba(239, 68, 68, 0.1)';
+        runBtn.disabled = false;
+      }
+    });
+
+    function handleStreamEvent(data) {
+      const { event, stepId } = data;
+      const stepEl = document.getElementById(`step-${stepId}`);
+
+      if (event === 'step_start') {
+        if (stepEl) stepEl.classList.add('active');
+        // Scroll step into view smoothly
+        stepEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } 
+      else if (event === 'substep_progress') {
+        const { subStepIndex } = data;
+        // Mark previous substeps as completed
+        for (let i = 0; i < subStepIndex; i++) {
+          const prev = document.getElementById(`sub-${stepId}-${i}`);
+          if (prev) {
+            prev.classList.remove('active');
+            prev.classList.add('completed');
+          }
+        }
+        // Mark current as active
+        const current = document.getElementById(`sub-${stepId}-${subStepIndex}`);
+        if (current) current.classList.add('active');
+      }
+      else if (event === 'step_complete') {
+        if (stepEl) {
+          stepEl.classList.remove('active');
+          stepEl.classList.add('completed');
+          
+          // We no longer show raw JSON in step-result to avoid clutter
+        }
+      }
+      else if (event === 'step_error') {
+        if (stepEl) {
+          stepEl.classList.remove('active');
+          const indicator = stepEl.querySelector('.step-indicator');
+          if (indicator) {
+            indicator.style.borderColor = '#ef4444';
+            indicator.style.background = '#ef4444';
+            indicator.textContent = 'X';
+            indicator.style.color = 'white';
+            indicator.style.fontSize = '12px';
+            indicator.style.fontWeight = 'bold';
+          }
+          
+          const resultEl = document.getElementById(`result-${stepId}`);
+          if (resultEl) {
+            resultEl.style.display = 'block';
+            resultEl.style.color = '#fca5a5';
+            resultEl.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+            resultEl.textContent = `Error: ${data.error}`;
+          }
+        }
+      }
+      else if (event === 'workflow_complete') {
+        const finalResult = document.getElementById('finalResult');
+        const finalResultText = document.getElementById('finalResultText');
+        if (finalResult && finalResultText && data.finalAnswer) {
+          finalResult.style.display = 'block';
+          finalResultText.innerHTML = data.finalAnswer;
+          finalResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    }
+  </script>
+</body>
+</html>

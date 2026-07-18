@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anvaya | Business Execution Platform</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --border: #334155;
+      --radius: 12px;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+    
+    .input-section {
+      background: var(--surface);
+      padding: 2rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      resize: vertical;
+      min-height: 120px;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    
+    button:hover {
+      background: var(--primary-hover);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+    
+    .loading {
+      display: none;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    /* Dashboard Output */
+    .dashboard {
+      display: none;
+      gap: 2rem;
+      grid-template-columns: 2fr 1fr;
+    }
+    
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+    }
+    
+    .panel-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    /* Preformatted Output */
+    pre {
+      background: #000;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9rem;
+      color: #a3be8c; /* Soft green */
+      border: 1px solid var(--border);
+    }
+    
+    .text-output pre {
+      white-space: pre-wrap;
+    }
+    
+    /* Mock suggestions row */
+    .suggestions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    
+    .suggestion-chip {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.4rem 0.8rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .suggestion-chip:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Anvaya</h1>
+      <p class="subtitle">Business Execution Platform for MSMEs</p>
+    </header>
+
+    <div class="input-section">
+      <div class="suggestions">
+        <span class="suggestion-chip" onclick="setInput(this.innerText)">I manufacture handmade soaps and want to sell them in Hyderabad</span>
+        <span class="suggestion-chip" onclick="setInput(this.innerText)">I need to source saffron urgently for my store in Delhi</span>
+        <span class="suggestion-chip" onclick="setInput(this.innerText)">Help me reduce my transport costs from Pune to Mumbai for 1500kg of fragile goods</span>
+      </div>
+      
+      <textarea id="intent-input" placeholder="Describe your business intent in plain language... e.g. 'I grow red chilli and want to sell 500kg in Chennai'"></textarea>
+      
+      <div class="controls">
+        <button id="analyze-btn" onclick="simulateExecution()">Execute Intent</button>
+        <div id="loading" class="loading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+          </svg>
+          Orchestrating MCP servers...
+        </div>
+      </div>
+    </div>
+
+    <div id="dashboard" class="dashboard">
+      <div class="panel">
+        <h2 class="panel-title">📊 Recommendation Dashboard</h2>
+        <div class="text-output" id="dashboard-output">
+          <pre>Waiting for execution...</pre>
+        </div>
+      </div>
+      
+      <div class="panel">
+        <h2 class="panel-title">💼 Negotiation Card</h2>
+        <div class="text-output" id="negotiation-output">
+          <pre>Waiting for execution...</pre>
+        </div>
+      </div>
+    </div>
+    
+    <div class="panel" style="margin-top: 2rem; display: none;" id="json-panel">
+      <h2 class="panel-title">🧩 Raw JSON Output</h2>
+      <div class="text-output" id="json-output">
+        <pre></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setInput(text) {
+      document.getElementById('intent-input').value = text;
+    }
+    
+    // In a real integration, this would call the MCP server via an HTTP bridge or SDK.
+    // For this standalone demo, we simulate the text output that the MCP server produces.
+    // The actual node server produces these exact string formats.
+    function simulateExecution() {
+      const input = document.getElementById('intent-input').value.toLowerCase();
+      if (!input) return;
+      
+      document.getElementById('analyze-btn').disabled = true;
+      document.getElementById('loading').style.display = 'flex';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('json-panel').style.display = 'none';
+      
+      // Simulate network/processing delay (MCP tools running)
+      setTimeout(() => {
+        document.getElementById('analyze-btn').disabled = false;
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'grid';
+        document.getElementById('json-panel').style.display = 'block';
+        
+        if (input.includes('saffron') || input.includes('source')) {
+          renderFindRareItemMock();
+        } else if (input.includes('transport') || input.includes('reduce')) {
+          renderReduceTransportMock();
+        } else {
+          renderSellProductMock();
+        }
+        
+      }, 1500);
+    }
+    
+    function renderSellProductMock() {
+      const dashboardText = `
+═════════════════════════════════════════════════════════════════
+  🏢  ANVAYA RECOMMENDATION DASHBOARD
+  Sell "handmade soaps" in Hyderabad
+═════════════════════════════════════════════════════════════════
+
+📊  MARKET INTELLIGENCE — HYDERABAD
+─────────────────────────────────────────────────────────────────
+  Demand Score     [█████████████░░░░░░░] 65/100
+  Competition      [████████░░░░░░░░░░░░] 40/100
+  Confidence       [███████████████░░░░░] 75/100
+  Selling Price    ₹120–₹168 INR (estimated)
+  💡 Strong opportunity in Hyderabad. High demand (65/100) and manageable competition (40/100). Consider entering this market.
+
+  Nearby Businesses (10 found):
+    • Fresh Mart (supermarket) — 2.4 km
+    • Reliance Fresh (supermarket) — 3.1 km
+    • Daily Needs (convenience) — 4.5 km
+
+🛒  TOP BUYERS (12 found)
+─────────────────────────────────────────────────────────────────
+  #   Name                         Type          Dist     Est. Revenue
+  ──────────────────────────────────────────────────────────────
+  #1  📦 Deccan Retail Chain        retailer      5.2km    ₹12,500
+  #2  📦 Sri Lakshmi Wholesale      wholesaler    8.4km    ₹15,000
+  #3  📦 Anand Super Market         retailer      3.8km    ₹7,400
+  #4  🌍 osm-491823                 wholesaler    6.1km    ₹18,000
+
+🚛  TRANSPORT OPTIONS
+─────────────────────────────────────────────────────────────────
+  Provider                   Vehicle         Dist     Cost
+  ────────────────────────────────────────────────────────────
+  ⭐ Hyderabad Pickup Ser...  pickup          14.2km   ₹452
+     Deccan Cargo Services    mini-truck      15.0km   ₹730
+
+🤝  SHARED TRANSPORT (COST-SAVING)
+─────────────────────────────────────────────────────────────────
+  💰 Green Cold Chain — ₹340 (900kg spare capacity)
+
+🤝  NEGOTIATION QUICK VIEW
+─────────────────────────────────────────────────────────────────
+  Opening Offer    ₹561.45
+  Max Acceptable   ₹406.8
+  Expected Saving  ₹-109.45 (-24.2%)
+
+═════════════════════════════════════════════════════════════════
+`;
+
+      const negText = `
+╔══════════════════════════════════════════════════════════╗
+║           💼  ANVAYA NEGOTIATION CARD                   ║
+╠══════════════════════════════════════════════════════════╣
+║  Strategy:                                              ║
+║  Current cost (₹452) is already near market rate.       ║
+║  Open at ₹561.45 and aim to hold firm.                  ║
+╠══════════════════════════════════════════════════════════╣
+║  💰 Opening Offer    ₹561.45                            ║
+║  🚫 Max Acceptable   ₹406.8                             ║
+║  🔒 Floor            ₹472.8                             ║
+║  📈 Expected Saving  ₹-109.45 (-24.2%)                  ║
+╠══════════════════════════════════════════════════════════╣
+║  📋 DRAFTED MESSAGE (copy and send):                    ║
+╚══════════════════════════════════════════════════════════╝
+
+Subject: Transport Rate Negotiation — pickup
+
+Namaste,
+
+I am reaching out regarding the pickup transport rate for our upcoming shipment.
+
+I have reviewed the current market rates for this route and found an average of ₹591 per trip. Based on this, I would like to propose an opening rate of ₹561.45.
+
+This is a mutually beneficial arrangement — I can commit to regular shipments and prompt payment within 48 hours of delivery.
+
+Additional context: Route to Hyderabad
+
+I am open to discussing and finalising this quickly. Please let me know your best rate so we can proceed.
+
+With regards,
+[Your Name / Business Name]
+[Contact Number]
+`;
+
+      document.getElementById('dashboard-output').innerHTML = `<pre>${dashboardText.trim()}</pre>`;
+      document.getElementById('negotiation-output').innerHTML = `<pre>${negText.trim()}</pre>`;
+      document.getElementById('json-output').innerHTML = `<pre>{
+  "intent": "sell_product",
+  "summary": {
+    "marketOpportunity": "Strong opportunity in Hyderabad. High demand...",
+    "topBuyer": "Deccan Retail Chain (retailer) — est. ₹12500"
+  },
+  "...": "..."
+}</pre>`;
+    }
+
+    function renderFindRareItemMock() {
+      // Mock for Find Rare Item
+      const dashboardText = `
+═════════════════════════════════════════════════════════════════
+  🏢  ANVAYA RECOMMENDATION DASHBOARD
+  Source "saffron" to Delhi
+═════════════════════════════════════════════════════════════════
+
+🛒  TOP SUPPLIERS (NATIONWIDE FALLBACK)
+─────────────────────────────────────────────────────────────────
+  #   Name                         Location      Price     Avail.
+  ──────────────────────────────────────────────────────────────
+  #1  ⭐ Kashmir Saffron Traders Srinagar      ₹280/g    5000g
+         (4.8 ★, FSSAI, Organic India)
+
+🚛  DELIVERY ESTIMATE
+─────────────────────────────────────────────────────────────────
+  Distance: 645 km (Estimated route)
+  Cost: ₹10,480 (Standard Cargo)
+  ETA: 6 days (3 days lead time + 3 days transit)
+
+═════════════════════════════════════════════════════════════════
+`;
+      document.getElementById('dashboard-output').innerHTML = `<pre>${dashboardText.trim()}</pre>`;
+      document.getElementById('negotiation-output').innerHTML = `<pre>No transport negotiation generated for inventory lookup.</pre>`;
+      document.getElementById('json-output').innerHTML = `<pre>{
+  "intent": "find_rare_item",
+  "productName": "saffron",
+  "usedNationwideFallback": true,
+  "suppliers": [...]
+}</pre>`;
+    }
+
+    function renderReduceTransportMock() {
+      const dashboardText = `
+═════════════════════════════════════════════════════════════════
+  🏢  ANVAYA RECOMMENDATION DASHBOARD
+  Reduce transport costs to Mumbai (1500kg, Fragile)
+═════════════════════════════════════════════════════════════════
+
+🚛  SOLO TRANSPORT OPTIONS
+─────────────────────────────────────────────────────────────────
+  Provider                   Vehicle         Dist     Cost
+  ────────────────────────────────────────────────────────────
+  ⭐ Maharashtra Movers       mini-truck      120km    ₹12,740
+     CoolChain Express        refrigerated    165km    ₹14,200
+
+🤝  SHARED TRANSPORT (COST-SAVING)
+─────────────────────────────────────────────────────────────────
+  💰 Pune Freight Co. — ₹8,400 (2000kg spare capacity)
+  💰 Western Ghats Log. — ₹9,100 (1500kg spare capacity)
+
+📈  POTENTIAL SAVINGS
+─────────────────────────────────────────────────────────────────
+  ₹4,340 (34.1%) by using shared transport with Pune Freight Co.
+
+═════════════════════════════════════════════════════════════════
+`;
+      
+      const negText = `
+╔══════════════════════════════════════════════════════════╗
+║           💼  ANVAYA NEGOTIATION CARD                   ║
+╠══════════════════════════════════════════════════════════╣
+║  Strategy:                                              ║
+║  Start at ₹11,500 (8% below market rate).               ║
+║  Walk away if counter-offer exceeds ₹12,740.            ║
+╠══════════════════════════════════════════════════════════╣
+║  💰 Opening Offer    ₹11,500                            ║
+║  🚫 Max Acceptable   ₹12,740                            ║
+║  🔒 Floor            ₹10,500                            ║
+║  📈 Expected Saving  ₹1,240 (9.7%)                      ║
+╚══════════════════════════════════════════════════════════╝
+`;
+
+      document.getElementById('dashboard-output').innerHTML = `<pre>${dashboardText.trim()}</pre>`;
+      document.getElementById('negotiation-output').innerHTML = `<pre>${negText.trim()}</pre>`;
+      document.getElementById('json-output').innerHTML = `<pre>{
+  "intent": "reduce_transport_cost",
+  "savingsDashboard": {
+    "amount": 4340,
+    "percentage": 34.1
+  }
+}</pre>`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{
+  "vehicleRates": {
+    "mini-truck": {
+      "baseRate": 500,
+      "perKmRate": 15,
+      "perKgRate": 5
+    },
+    "pickup": {
+      "baseRate": 300,
+      "perKmRate": 10,
+      "perKgRate": 3
+    },
+    "tempo": {
+      "baseRate": 400,
+      "perKmRate": 12,
+      "perKgRate": 4
+    },
+    "large-truck": {
+      "baseRate": 800,
+      "perKmRate": 20,
+      "perKgRate": 6
+    },
+    "van": {
+      "baseRate": 250,
+      "perKmRate": 8,
+      "perKgRate": 2.5
+    },
+    "refrigerated-van": {
+      "baseRate": 600,
+      "perKmRate": 14,
+      "perKgRate": 4
+    },
+    "container-truck": {
+      "baseRate": 1200,
+      "perKmRate": 22,
+      "perKgRate": 7
+    }
+  },
+  "productTypeMultipliers": {
+    "standard": 1.0,
+    "perishable": 1.4,
+    "fragile": 1.3,
+    "hazardous": 1.6
+  },
+  "negotiation": {
+    "openingOfferMultiplier": 0.95,
+    "maxAcceptableMultiplier": 0.90,
+    "floorMultiplier": 0.80,
+    "incrementStep": 0.02
+  },
+  "decisionSupport": {
+    "nearTieThresholdPercent": 10,
+    "scoringWeights": {
+      "price": 0.45,
+      "distance": 0.30,
+      "reliability": 0.15,
+      "volume": 0.10
+    }
+  },
+  "demandScoring": {
+    "newsWeightAgri": 0.3,
+    "newsMentionMax": 20,
+    "competitorDensityMax": 30,
+    "priceStabilityBonus": 10
+  },
+  "categoryToShopTags": {
+    "fmcg": ["supermarket", "convenience", "general", "department_store"],
+    "agri": ["greengrocer", "farm", "marketplace", "general"],
+    "textiles": ["clothes", "fabric", "department_store"],
+    "pharma": ["chemist", "pharmacy"],
+    "electronics": ["electronics", "hardware"],
+    "handicrafts": ["gift", "art", "department_store"],
+    "general": ["supermarket", "convenience", "general"]
+  }
+}
