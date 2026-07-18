@@ -1,6 +1,7 @@
 import express from 'express';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { db } from '@anvaya/shared/db';
 import { createTenantDb } from '@anvaya/shared/db/tenant';
@@ -56,26 +57,33 @@ server.tool(
   }
 );
 
-// ── HTTP Server Setup ────────────────────────────
-const app = express();
+// ── Server Startup ───────────────────────────────
+if (process.argv.includes('--stdio')) {
+  const transport = new StdioServerTransport();
+  server.connect(transport).then(() => {
+    console.error('Discovery MCP server running on stdio');
+  }).catch(err => {
+    console.error('Failed to connect stdio transport:', err);
+  });
+} else {
+  const app = express();
+  let transport: SSEServerTransport;
 
+  app.get('/sse', async (req, res) => {
+    transport = new SSEServerTransport("/messages", res);
+    await server.connect(transport);
+  });
 
-let transport: SSEServerTransport;
+  app.post('/messages', async (req, res) => {
+    if (transport) {
+      await transport.handlePostMessage(req, res);
+    } else {
+      res.status(400).json({ error: 'No active session' });
+    }
+  });
 
-app.get('/sse', async (req, res) => {
-  transport = new SSEServerTransport("/messages", res);
-  await server.connect(transport);
-});
-
-app.post('/messages', async (req, res) => {
-  if (transport) {
-    await transport.handlePostMessage(req, res);
-  } else {
-    res.status(400).json({ error: 'No active session' });
-  }
-});
-
-const PORT = 3010;
-app.listen(PORT, () => {
-  console.log(`Discovery MCP server listening on port ${PORT}`);
-});
+  const PORT = 3010;
+  app.listen(PORT, () => {
+    console.log(`Discovery MCP server listening on port ${PORT}`);
+  });
+}
